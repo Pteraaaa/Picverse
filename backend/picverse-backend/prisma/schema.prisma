@@ -1,0 +1,77 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id Int @id @default(autoincrement())
+
+  name String
+
+  email String @unique
+
+  password String
+
+  artworks Artwork[]
+
+  createdAt    DateTime       @default(now())
+  artworkLikes ArtworkLikes[]
+}
+
+model Artwork {
+  id Int @id @default(autoincrement())
+
+  title String
+
+  description String
+
+  imageUrl String
+
+  likes Int @default(0)
+
+  userId Int
+
+  user User @relation(fields: [userId], references: [id])
+
+  tags ArtworkTags[]
+
+  createdAt DateTime @default(now())
+
+  artworkLikes ArtworkLikes[]
+}
+
+model ArtworkLikes {
+  userId Int
+
+  artworkId Int
+
+  user User? @relation(fields: [userId], references: [id])
+
+  artwork Artwork? @relation(fields: [artworkId], references: [id])
+
+  @@id([userId, artworkId])
+}
+
+model Tag {
+  id Int @id @default(autoincrement())
+
+  name String @unique
+
+  artworks ArtworkTags[]
+}
+
+model ArtworkTags {
+  artworkId Int
+
+  artwork Artwork? @relation(fields: [artworkId], references: [id])
+
+  tagId Int
+
+  tag Tag? @relation(fields: [tagId], references: [id])
+
+  @@id([artworkId, tagId])
+}

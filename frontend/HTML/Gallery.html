@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Picverse - Gallery</title>
+    <link rel="stylesheet" href="../CSS/style.css">
+    <link rel="icon" type="image/png" href="../Asset/Picverse Logo.png">
+</head>
+<body>
+    <header>
+        <a href="Home.html" class="logo">
+            <img src="../Asset/Picverse Logo.png" alt="">
+            Picverse
+        </a>
+        <div class="hamburger" id="hamburger">
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+        <nav class="nav-bar" id="nav-menu">
+            <a href="Home.html">Home</a>
+            <a href="Gallerydigitalart.html" class="selected">Gallery</a>
+            <a href="Submission.html">Submission</a>
+            <a href="Community.html">Community</a>
+            <a href="Aboutus.html">About Us</a>
+        </nav>
+    </header>
+
+    <content>
+        <div class="tags-container-gallery" id="tagContainer">
+        </div>
+        <div class="featured-artworks">
+            <div class="list-of-artworks" id="artworkContainer">
+                
+            </div>
+        </div>   
+    </content>
+
+    <footer>
+        <div class="footer-container">
+            <nav class="footer-nav">
+                <a href="Home.html">Home</a>
+                <a href="Gallerydigitalart.html">Gallery</a>
+                <a href="Submission.html">Submission</a>
+                <a href="Community.html">Community</a>
+                <a href="Aboutus.html">About Us</a>
+            </nav>
+            <a href="Home.html" class="logo-nav">
+                <img src="../Asset/Picverse Logo.png" alt="">
+                Picverse
+            </a>
+        </div>
+        <div class="footer-bottom">
+            &copy; 2025 Picverse.&nbsp;All rights reserved.
+        </div>
+    </footer>
+
+    <div id="artModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+
+            <div class="modal-left">
+                <img id="modalImage" src="../Asset/Home/David-Sossella-5.jpg" alt="">
+            </div>
+    
+            <div class="modal-right">
+                <h2 id="modalTitle"></h2>
+
+                <div class="modal-author">
+                    <img id="modalProfile" src="" alt="">
+                    <span id="modalAuthor"></span>
+                </div>
+    
+                <p id="modalDesc"></p>
+    
+                <div class="modal-likes">
+                    ❤
+                    <span id="modalLikes">
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script src="../JavaScript/ScriptHamburger.js"></script>
+    <!-- <script src="../JavaScript/Scriptgallery.js"></script> -->
+    <script src="../JavaScript/ScriptGalleryApi.js"></script>
+</body>
+</html>
