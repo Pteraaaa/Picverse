@@ -1,6 +1,6 @@
 const submissionForm = document.getElementById("submissionForm");
 
-submissionForm.addEventListener("submit", function (event) {
+submissionForm.addEventListener("submit", async function (event) {
     event.preventDefault();
 
     document.getElementById('emailError').textContent = '';
@@ -81,14 +81,54 @@ submissionForm.addEventListener("submit", function (event) {
         return;
     }
 
-    const confirmSubmit = confirm("Are you sure you want to submit the form?");
+    // Confirmation dialog
+    const confirmSubmit = confirm("Are you sure you want to submit the artwork?");
     if(!confirmSubmit){
         return;
     }
 
-    alert("Form submitted successfully!");
-    submissionForm.reset();
+    // Submit to backend
+    await submitToBackend(email, title, description, tags, artwork, aiGenerated.value);
 });
+
+async function submitToBackend(email, title, description, tags, artwork, aiGenerated) {
+    const formData = new FormData();
+    formData.append('email', email);
+    formData.append('title', title);
+    formData.append('description', description);
+    formData.append('tags', tags);
+    formData.append('isAiGenerated', aiGenerated === 'yes');
+    formData.append('artwork', artwork);
+    // Don't send userId - backend will handle it as optional
+
+    try {
+        console.log('Submitting to backend...', { email, title, tags, aiGenerated });
+        
+        const response = await fetch('http://localhost:3000/submission/create', {
+            method: 'POST',
+            body: formData,
+        });
+
+        console.log('Response received:', response.status, response.statusText);
+        
+        const result = await response.json();
+        console.log('Response data:', result);
+
+        if (!response.ok) {
+            console.error('Error response:', result);
+            alert(`Error: ${result.message || 'Failed to submit artwork'}`);
+            return;
+        }
+
+        alert("Artwork submitted successfully!");
+        submissionForm.reset();
+        document.getElementById("imagePreview").style.display = "none";
+
+    } catch (error) {
+        console.error('Error details:', error);
+        alert(`Error submitting artwork: ${error.message}. Make sure the backend is running on http://localhost:3000`);
+    }
+}
 
 document.addEventListener('DOMContentLoaded', function (){
     const selectElement = document.querySelector('select');
