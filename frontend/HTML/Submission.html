@@ -64,13 +64,18 @@
                         <div class="error" id="descriptionError"></div>
                     </div>
                     <div class="form-group">
-                        <label for="tags">Tags</label>
-                        <select id="tags" name="tags">
-                            <option value="" disabled selected hidden>Select Tags</option>
-                            <option value="#tags1">#tags1</option>
-                            <option value="#tags2">#tags2</option>
-                            <option value="#tags3">#tags3</option>
-                        </select>
+                        <label>Tags</label>
+                        <div class="tags-selection-container" id="tagsSelectionContainer">
+                            <!-- Tag bubbles will be rendered dynamically here -->
+                        </div>
+                        <div class="custom-tag-group">
+                            <input 
+                                type="text" 
+                                id="customTagInput" 
+                                placeholder="Enter custom tag name" 
+                            />
+                            <button type="button" id="addCustomTagBtn">Add Tag</button>
+                        </div>
                         <div class="error" id="tagsError"></div>
                     </div>
                     <div class="form-group">

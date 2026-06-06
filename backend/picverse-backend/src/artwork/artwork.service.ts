@@ -2,12 +2,14 @@ import { Injectable, BadRequestException } from '@nestjs/common';
 import { PrismaService } from 'src/common/prisma/prisma.service';
 import { CreateArtworkDto } from './dtos/create-artwork.dto';
 import { FileUploadService, UploadFile } from './file-upload.service';
+import { TagFactory } from './tag.factory';
 
 @Injectable()
 export class ArtworkService {
     constructor(
         private prisma: PrismaService,
         private fileUploadService: FileUploadService,
+        private tagFactory: TagFactory,
     ) {}
 
     async createArtwork(dto: CreateArtworkDto, file: UploadFile, userId: number) {
@@ -22,12 +24,32 @@ export class ArtworkService {
 
         const { fileUrl } = await this.fileUploadService.uploadFile(file);
 
-        // Parse tags from space/comma/hash separated string
-        const tagNames = dto.tags
-            .split(/[\s,#]+/)
-            .map(t => t.trim())
-            .filter(t => t.length > 0)
-            .map(t => t.charAt(0).toUpperCase() + t.slice(1).toLowerCase());
+        // Parse tags from input (which can be array, or space/comma/hash separated string)
+        let tagNames: string[] = [];
+        if (Array.isArray(dto.tags)) {
+            tagNames = dto.tags;
+        } else if (typeof dto.tags === 'string') {
+            tagNames = dto.tags
+                .split(/[\s,#]+/)
+                .map(t => t.trim())
+                .filter(t => t.length > 0);
+        }
+
+        // Clean standard/custom tags via Factory
+        const processedTags = tagNames.map(name => {
+            const standardTagsList = ['digitalart', 'portrait', 'anime', 'fantasy', 'cyberpunk', 'aiart', 'nature', 'photography', 'abstract', 'pixelart', 'character'];
+            const isStandard = standardTagsList.includes(name.toLowerCase());
+            return this.tagFactory.createTag(name, !isStandard);
+        });
+
+        // AI Art auto-tagging logic
+        const isAi = dto.isAiGenerated === true || dto.isAiGenerated === 'true' || dto.isAiGenerated === 'yes';
+        if (isAi) {
+            const hasAiTag = processedTags.some(t => t.name.toLowerCase() === 'aiart');
+            if (!hasAiTag) {
+                processedTags.push(this.tagFactory.createTag('AIart', false));
+            }
+        }
 
         const artwork = await this.prisma.artwork.create({
             data: {
@@ -36,38 +58,34 @@ export class ArtworkService {
                 imageUrl: fileUrl,
                 userId: userId,
                 tags: {
-                    create: tagNames.map(name => ({
-                        tag: {
-                            connectOrCreate: {
-                                where: { name: name },
-                                create: { name: name }
-                            }
-                        }
+                    connectOrCreate: processedTags.map(tag => ({
+                        where: { name: tag.name },
+                        create: { name: tag.name }
                     }))
                 }
             },
             include: {
                 user: true,
-                tags: {
-                    include: {
-                        tag: true
-                    }
-                }
+                tags: true
             }
         });
 
         return artwork;
     }
 
-    async getAllArtworks(userId: number) {
+    async getAllArtworks(userId: number, sort?: string) {
+        let orderBy: any = { createdAt: 'desc' };
+        if (sort === 'oldest') {
+            orderBy = { createdAt: 'asc' };
+        } else if (sort === 'most_likes') {
+            orderBy = { likes: 'desc' };
+        }
+
         const artworks = await this.prisma.artwork.findMany({
+            orderBy,
             include: {
                 user: true,
-                tags: {
-                    include: {
-                        tag: true,
-                    },
-                },
+                tags: true,
                 artworkLikes: true,
             }
         });
@@ -82,25 +100,26 @@ export class ArtworkService {
         )
     }
 
-    async getByTag(tagName: string, userId: number) {
+    async getByTag(tagName: string, userId: number, sort?: string) {
+        let orderBy: any = { createdAt: 'desc' };
+        if (sort === 'oldest') {
+            orderBy = { createdAt: 'asc' };
+        } else if (sort === 'most_likes') {
+            orderBy = { likes: 'desc' };
+        }
+
         const artworks = await this.prisma.artwork.findMany({
             where: {
                 tags: {
                     some: {
-                        tag: {
-                            name: tagName
-                        }
+                        name: tagName
                     }
                 }
             },
-
+            orderBy,
             include: {
                 user: true,
-                tags: {
-                    include: {
-                        tag: true,
-                    },
-                },
+                tags: true,
                 artworkLikes: true,
             }
         });
@@ -118,6 +137,14 @@ export class ArtworkService {
         const tags = await this.prisma.tag.findMany();
 
         return tags.sort(() => Math.random() - 0.5).slice(0, 5);
+    }
+
+    async getAllTags() {
+        return this.prisma.tag.findMany({
+            orderBy: {
+                name: 'asc'
+            }
+        });
     }
 
     async toggleLike(

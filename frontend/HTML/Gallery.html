@@ -20,7 +20,7 @@
         </div>
         <nav class="nav-bar" id="nav-menu">
             <a href="Home.html">Home</a>
-            <a href="Gallerydigitalart.html" class="selected">Gallery</a>
+            <a href="Gallery.html" class="selected">Gallery</a>
             <a href="Submission.html">Submission</a>
             <a href="Community.html">Community</a>
             <a href="Aboutus.html">About Us</a>
@@ -29,7 +29,14 @@
     </header>
 
     <content>
-        <div class="tags-container-gallery" id="tagContainer">
+        <div class="gallery-controls">
+            <div class="tags-container-gallery" id="tagContainer" style="padding-top: 0;">
+            </div>
+            <select id="sortGallery">
+                <option value="newest">Newest</option>
+                <option value="oldest">Oldest</option>
+                <option value="most_likes">Most Likes</option>
+            </select>
         </div>
         <div class="featured-artworks">
             <div class="list-of-artworks" id="artworkContainer">
@@ -75,8 +82,10 @@
     
                 <p id="modalDesc"></p>
     
+                <div class="modal-tags" id="modalTags"></div>
+
                 <div class="modal-likes">
-                    ❤
+                    <span id="modalLikeBtn" style="cursor: pointer; user-select: none;">❤</span>
                     <span id="modalLikes">
                     </span>
                 </div>

@@ -1,13 +1,11 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
 require("dotenv/config");
-const config_1 = require("@prisma/config");
-exports.default = (0, config_1.defineConfig)({
-    migrations: {
-        seed: 'npx ts-node ./prisma/seed.ts',
-    },
-    datasource: {
-        url: process.env.DIRECT_URL,
-    },
+const { defineConfig } = require("@prisma/config");
+
+module.exports = defineConfig({
+  migrations: {
+    seed: 'npx ts-node ./prisma/seed.ts',
+  },
+  datasource: {
+    url: process.env.DIRECT_URL,
+  },
 });
-//# sourceMappingURL=prisma.config.js.map

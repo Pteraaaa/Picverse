@@ -6,9 +6,10 @@ import { ArtworkModule } from './artwork/artwork.module';
 import { ForumModule } from './forum/forum.module';
 import { NotificationModule } from './notification/notification.module';
 import { PrismaModule } from './common/prisma/prisma.module';
+import { UsersModule } from './users/users.module';
 
 @Module({
-  imports: [AuthModule, ArtworkModule, ForumModule, NotificationModule, PrismaModule],
+  imports: [AuthModule, ArtworkModule, ForumModule, NotificationModule, PrismaModule, UsersModule],
   controllers: [AppController],
   providers: [AppService],
 })

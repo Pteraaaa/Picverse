@@ -3,7 +3,7 @@ document.getElementById('hamburger').addEventListener("click", function() {
     document.getElementById('hamburger').classList.toggle('active');
 });
 
-// Dynamic Navbar Login/Logout toggle
+// Dynamic Navbar Login/Profile toggle
 document.addEventListener("DOMContentLoaded", function () {
     const navMenu = document.getElementById("nav-menu");
     if (!navMenu) return;
@@ -18,20 +18,26 @@ document.addEventListener("DOMContentLoaded", function () {
 
     const token = localStorage.getItem("token");
     if (token) {
-        authBtn.textContent = "Logout";
-        authBtn.href = "#";
-        authBtn.addEventListener("click", function (e) {
-            e.preventDefault();
-            const confirmLogout = confirm("Are you sure you want to log out?");
-            if (confirmLogout) {
-                localStorage.removeItem("token");
-                localStorage.removeItem("user");
-                alert("Logged out successfully.");
-                window.location.reload();
-            }
-        });
+        authBtn.textContent = "Profile";
+        authBtn.href = "Profile.html";
+        
+        // Remove active class from other links if we are on Profile.html
+        if (window.location.pathname.includes("Profile.html")) {
+            const navLinks = navMenu.querySelectorAll("a");
+            navLinks.forEach(link => {
+                if (link !== authBtn) {
+                    link.classList.remove("selected");
+                }
+            });
+            authBtn.classList.add("selected");
+        }
     } else {
         authBtn.textContent = "Login";
         authBtn.href = "Login.html";
+        
+        // If on Profile.html and not logged in, make sure it is not selected
+        if (window.location.pathname.includes("Profile.html")) {
+            authBtn.classList.remove("selected");
+        }
     }
 });

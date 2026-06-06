@@ -8,6 +8,10 @@ document.addEventListener("DOMContentLoaded", function () {
 });
 
 const submissionForm = document.getElementById("submissionForm");
+const selectedTags = new Set();
+const tagsSelectionContainer = document.getElementById("tagsSelectionContainer");
+const customTagInput = document.getElementById("customTagInput");
+const addCustomTagBtn = document.getElementById("addCustomTagBtn");
 
 submissionForm.addEventListener("submit", async function (event) {
     event.preventDefault();
@@ -28,7 +32,11 @@ submissionForm.addEventListener("submit", async function (event) {
     
     const title = document.getElementById("title").value.trim();
     const description = document.getElementById("description").value.trim();
-    const tags = document.getElementById("tags").value.trim();
+    
+    // Query selected tags directly from the DOM
+    const tags = Array.from(document.querySelectorAll("#tagsSelectionContainer .tag-bubble.active, #tagsSelectionContainer .tag-bubble.selected"))
+        .map(bubble => bubble.dataset.tag || bubble.textContent.replace('#', '').trim());
+
     const artwork = document.getElementById("artwork").files[0];
     const aiGenerated = document.querySelector('input[name="aiGenerated"]:checked');
 
@@ -39,41 +47,34 @@ submissionForm.addEventListener("submit", async function (event) {
     if(title == ''){
         isValid = false;
         document.getElementById('titleError').textContent = "Title is required";
-    }else{
-        const words = title.trim().split(' ');
-        let isTitleCase = true;
-        
-        for(let word of words){
-            if(word.length === 0) continue;
-            const firstChar = word[0];
-            const rest = word.slice(1);
-
-            if (firstChar !== firstChar.toUpperCase() || rest !== rest.toLowerCase()){
-                isTitleCase = false;
-                break;
-            }
-        }
-
-        if(!isTitleCase){
-            isValid = false;
-            document.getElementById('titleError').textContent = "Each word must start with a capital letter";
-        }
+    }else if(title.length < 3){
+        isValid = false;
+        document.getElementById('titleError').textContent = "Title must be at least 3 characters";
+    }else if(title.length > 50){
+        isValid = false;
+        document.getElementById('titleError').textContent = "Title must be at most 50 characters";
+    }else if(!/^[A-Z]/.test(title)){
+        isValid = false;
+        document.getElementById('titleError').textContent = "Title must start with a capital letter";
     }
 
     if(description == ''){
         isValid = false;
-        document.getElementById('descriptionError'). textContent = "Description is required";
+        document.getElementById('descriptionError').textContent = "Description is required";
+    }else if(description.length < 10){
+        isValid = false;
+        document.getElementById('descriptionError').textContent = "Description must be at least 10 characters";
     }
 
-    if(tags == ''){
+    if(tags.length === 0){
         isValid = false;
-        document.getElementById('tagsError'). textContent = "Tags is required";
+        document.getElementById('tagsError').textContent = "Tags are required";
     }
 
     if(!artwork){
         isValid = false;
-        document.getElementById('fileError'). textContent = "Please choose a file";
-    }else if(!artwork.name.endsWith(".jpg") && !artwork.name.endsWith(".jpeg") && !artwork.name.endsWith(".png")) {
+        document.getElementById('fileError').textContent = "Please choose a file";
+    }else if(!artwork.name.toLowerCase().endsWith(".jpg") && !artwork.name.toLowerCase().endsWith(".jpeg") && !artwork.name.toLowerCase().endsWith(".png")) {
         isValid = false;
         document.getElementById('fileError').textContent = "Invalid file type. Only .jpg, .jpeg, .png";
     }else if(artwork.size > 1073741824){
@@ -111,7 +112,7 @@ async function submitToBackend(title, description, tags, artwork, aiGenerated) {
     const formData = new FormData();
     formData.append('title', title);
     formData.append('description', description);
-    formData.append('tags', tags);
+    formData.append('tags', tags.join(','));
     formData.append('isAiGenerated', aiGenerated === 'yes');
     formData.append('artwork', artwork);
 
@@ -155,26 +156,91 @@ async function submitToBackend(title, description, tags, artwork, aiGenerated) {
     }
 }
 
-document.addEventListener('DOMContentLoaded', function (){
-    const selectElement = document.querySelector('select');
+async function loadAvailableTags() {
+    try {
+        const response = await fetch(`${API_BASE_URL}/artwork/tags`);
+        let tags = [];
+        if (response.ok) {
+            tags = await response.json();
+        }
+        
+        if (tags.length === 0) {
+            tags = [
+                { name: 'Digitalart' },
+                { name: 'Portrait' },
+                { name: 'Anime' },
+                { name: 'Fantasy' },
+                { name: 'Cyberpunk' },
+                { name: 'AIart' },
+                { name: 'Nature' },
+                { name: 'Photography' },
+                { name: 'Abstract' },
+                { name: 'Pixelart' },
+                { name: 'Character' }
+            ];
+        }
 
-    selectElement.addEventListener('change', function() {
-        this.blur();
+        tagsSelectionContainer.innerHTML = "";
+        tags.forEach(tag => {
+            createTagBubble(tag.name);
+        });
+    } catch (error) {
+        console.error("Error loading tags:", error);
+        const defaultTags = ['Digitalart', 'Portrait', 'Anime', 'Fantasy', 'Cyberpunk', 'AIart', 'Nature', 'Photography', 'Abstract', 'Pixelart', 'Character'];
+        tagsSelectionContainer.innerHTML = "";
+        defaultTags.forEach(name => createTagBubble(name));
+    }
+}
+
+function createTagBubble(name) {
+    const existing = Array.from(tagsSelectionContainer.children).find(el => el.dataset.tag.toLowerCase() === name.toLowerCase());
+    if (existing) return;
+
+    const bubble = document.createElement("div");
+    bubble.className = "tag-bubble";
+    bubble.textContent = "#" + name;
+    bubble.dataset.tag = name;
+
+    bubble.addEventListener("click", () => {
+        if (selectedTags.has(name)) {
+            selectedTags.delete(name);
+            bubble.classList.remove("active");
+        } else {
+            selectedTags.add(name);
+            bubble.classList.add("active");
+            document.getElementById('tagsError').textContent = '';
+        }
     });
 
-    function updateColor(){
-        if(selectElement.value !== ""){
-            selectElement.style.color = "#000";
+    tagsSelectionContainer.appendChild(bubble);
+}
+
+document.addEventListener('DOMContentLoaded', function (){
+    loadAvailableTags();
+
+    addCustomTagBtn.addEventListener("click", () => {
+        const name = customTagInput.value.trim().replace(/#/g, '');
+        if (name.length === 0) return;
+
+        const formattedName = name.charAt(0).toUpperCase() + name.slice(1).toLowerCase();
+        createTagBubble(formattedName);
+
+        selectedTags.add(formattedName);
+        const bubble = Array.from(tagsSelectionContainer.children).find(el => el.dataset.tag === formattedName);
+        if (bubble) {
+            bubble.classList.add("active");
         }
-        else{
-            selectElement.style.color = "#777";
+
+        customTagInput.value = "";
+        document.getElementById('tagsError').textContent = '';
+    });
+
+    customTagInput.addEventListener("keypress", (e) => {
+        if (e.key === "Enter") {
+            e.preventDefault();
+            addCustomTagBtn.click();
         }
-    }
-
-    updateColor()
-
-    selectElement.addEventListener('change', updateColor);
-
+    });
 });
 
 document.addEventListener('DOMContentLoaded', function (){

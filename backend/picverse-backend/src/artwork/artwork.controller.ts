@@ -26,18 +26,23 @@ export class ArtworkController {
     }
     
     @Get()
-    getAllArtworks(@Query('userId') userId: string) {
-        return this.artworkService.getAllArtworks(Number(userId));
+    getAllArtworks(@Query('userId') userId: string, @Query('sort') sort?: string) {
+        return this.artworkService.getAllArtworks(Number(userId), sort);
     }
 
     @Get('tag/:tag')
-    getByTag(@Param('tag') tag: string, @Query('userId') userId: string) {
-        return this.artworkService.getByTag(tag, Number(userId));
+    getByTag(@Param('tag') tag: string, @Query('userId') userId: string, @Query('sort') sort?: string) {
+        return this.artworkService.getByTag(tag, Number(userId), sort);
     }
 
     @Get('random-tags')
     getRandomTag() {
         return this.artworkService.getRandomTags();
+    }
+
+    @Get('tags')
+    getAllTags() {
+        return this.artworkService.getAllTags();
     }
 
     @Post(':id/like')

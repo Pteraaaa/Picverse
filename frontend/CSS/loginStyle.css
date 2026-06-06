@@ -11,7 +11,8 @@ body {
 
 .container {
     display: flex;
-    height: 100vh;
+    flex-direction: row;
+    height: calc(100vh - 56px);
 }
 
 .login-panel {
@@ -23,7 +24,7 @@ body {
     align-items: center;
 }
 
-.logo {
+.panel-logo {
     font-size: 28px;
     font-weight: bold;
     color: #b25d18;
