@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Picverse - Profile</title>
+    <link rel="stylesheet" href="../CSS/style.css">
+    <link rel="stylesheet" href="../CSS/profileStyle.css">
+    <link rel="icon" type="image/png" href="../Asset/Picverse Logo.png">
+</head>
+<body>
+    <header>
+        <a href="Home.html" class="logo">
+            <img src="../Asset/Picverse Logo.png" alt="">
+            Picverse
+        </a>
+        <div class="hamburger" id="hamburger">
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+        <nav class="nav-bar" id="nav-menu">
+            <a href="Home.html">Home</a>
+            <a href="Gallery.html">Gallery</a>
+            <a href="Submission.html">Submission</a>
+            <a href="Community.html">Community</a>
+            <a href="Aboutus.html">About Us</a>
+            <a href="Profile.html" id="auth-btn">Profile</a>
+        </nav>
+    </header>
+
+    <content>
+        <!-- Logged Out / Unauthorized Page State -->
+        <div id="unauth-container" class="form-wrapper" style="display: none;">
+            <div class="form-container locked-container">
+                <div class="locked-icon">🔒</div>
+                <h2>Authentication Required</h2>
+                <p>You need to login to view this page</p>
+                <a href="Login.html" class="login-redirect-btn">Go to Login</a>
+            </div>
+        </div>
+
+        <!-- Logged In / Settings Page Form State -->
+        <div id="profile-container" class="form-wrapper" style="display: none;">
+            <div class="form-container">
+                <h1 class="section-title">Account Settings</h1>
+                
+                <form id="profileForm" novalidate>
+                    <div class="profile-pic-section">
+                        <div class="profile-pic-container" id="profile-pic-trigger">
+                            <img id="profile-pic-preview" src="" alt="Profile Picture">
+                            <div class="profile-pic-overlay">
+                                <span>Change Photo</span>
+                            </div>
+                        </div>
+                        <input type="file" id="profilePictureInput" name="profilePicture" accept="image/*" style="display: none;">
+                        <button type="button" id="upload-btn" class="secondary-btn">Choose Image</button>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="username">Username</label>
+                        <input type="text" id="username" name="name" placeholder="Enter your username" required>
+                        <div class="error" id="usernameError"></div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="email">Email Address</label>
+                        <input type="email" id="email" name="email" placeholder="Enter your email" required>
+                        <div class="error" id="emailError"></div>
+                    </div>
+
+                    <button type="submit" id="save-btn">Save Changes</button>
+                    <button type="button" id="logout-btn" class="logout-btn">Logout</button>
+                </form>
+            </div>
+        </div>
+    </content>
+
+    <footer>
+        <div class="footer-container">
+            <nav class="footer-nav">
+                <a href="Home.html">Home</a>
+                <a href="Gallery.html">Gallery</a>
+                <a href="Submission.html">Submission</a>
+                <a href="Community.html">Community</a>
+                <a href="Aboutus.html">About Us</a>
+            </nav>
+            <a href="Home.html" class="logo-nav">
+                <img src="../Asset/Picverse Logo.png" alt="">
+                Picverse
+            </a>
+        </div>
+        <div class="footer-bottom">
+            &copy; 2025 Picverse.&nbsp;All rights reserved.
+        </div> 
+    </footer>
+
+    <script src="../JavaScript/config.js"></script>
+    <script src="../JavaScript/ScriptHamburger.js"></script>
+    <script src="../JavaScript/Scriptprofile.js"></script>
+</body>
+</html>

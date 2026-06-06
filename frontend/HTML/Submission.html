@@ -24,6 +24,7 @@
             <a href="Submission.html" class="selected">Submission</a>
             <a href="Community.html">Community</a>
             <a href="Aboutus.html">About Us</a>
+            <a href="Login.html" id="auth-btn">Login</a>
         </nav>
     </header>
 
@@ -32,7 +33,7 @@
             <div class="form-container">
                 <h1 class="section-title">Submit Your Artwork</h1>
                 <form id="submissionForm" action="#" method="post">
-                    <div class="form-group">
+                    <div class="form-group" style="display: none;">
                         <label for="email">Email</label>
                         <input
                             type="email"
@@ -63,13 +64,18 @@
                         <div class="error" id="descriptionError"></div>
                     </div>
                     <div class="form-group">
-                        <label for="tags">Tags</label>
-                        <select id="tags" name="tags">
-                            <option value="" disabled selected hidden>Select Tags</option>
-                            <option value="#tags1">#tags1</option>
-                            <option value="#tags2">#tags2</option>
-                            <option value="#tags3">#tags3</option>
-                        </select>
+                        <label>Tags</label>
+                        <div class="tags-selection-container" id="tagsSelectionContainer">
+                            <!-- Tag bubbles will be rendered dynamically here -->
+                        </div>
+                        <div class="custom-tag-group">
+                            <input 
+                                type="text" 
+                                id="customTagInput" 
+                                placeholder="Enter custom tag name" 
+                            />
+                            <button type="button" id="addCustomTagBtn">Add Tag</button>
+                        </div>
                         <div class="error" id="tagsError"></div>
                     </div>
                     <div class="form-group">
@@ -117,7 +123,7 @@
         <div class="footer-container">
             <nav class="footer-nav">
                 <a href="Home.html">Home</a>
-                <a href="Gallerydigitalart.html">Gallery</a>
+                <a href="Gallery.html">Gallery</a>
                 <a href="Submission.html">Submission</a>
                 <a href="Community.html">Community</a>
                 <a href="Aboutus.html">About Us</a>
@@ -132,6 +138,7 @@
         </div> 
     </footer>
 
+    <script src="../JavaScript/config.js"></script>
     <script src="../JavaScript/Scriptsubmission.js"></script>
     <script src="../JavaScript/ScriptHamburger.js"></script>
 </body>

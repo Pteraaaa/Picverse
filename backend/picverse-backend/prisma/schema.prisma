@@ -3,8 +3,7 @@ generator client {
 }
 
 datasource db {
-  provider = "mysql"
-  url      = env("DATABASE_URL")
+  provider  = "postgresql"
 }
 
 model User {
@@ -16,12 +15,13 @@ model User {
 
   password String
 
-  artworks Artwork[]
+  profilePicture String?
 
-  submissions Submission[]
+  artworks Artwork[]
 
   createdAt    DateTime       @default(now())
   artworkLikes ArtworkLikes[]
+  submissions  Submission[]
 }
 
 model Artwork {
@@ -39,7 +39,7 @@ model Artwork {
 
   user User @relation(fields: [userId], references: [id])
 
-  tags ArtworkTags[]
+  tags Tag[]
 
   createdAt DateTime @default(now())
 
@@ -63,45 +63,23 @@ model Tag {
 
   name String @unique
 
-  artworks ArtworkTags[]
-}
-
-model ArtworkTags {
-  artworkId Int
-
-  artwork Artwork? @relation(fields: [artworkId], references: [id])
-
-  tagId Int
-
-  tag Tag? @relation(fields: [tagId], references: [id])
-
-  @@id([artworkId, tagId])
+  artworks Artwork[]
 }
 
 model Submission {
-  id Int @id @default(autoincrement())
-
-  email String
-
-  title String
-
-  description String
-
-  fileUrl String
-
-  fileName String
-
+  id            Int      @id @default(autoincrement())
+  email         String
+  title         String
+  description   String
+  fileUrl       String
+  fileName      String
   isAiGenerated Boolean
-
-  tags String
-
-  userId Int?
-
-  user User? @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  status String @default("pending")
-
-  createdAt DateTime @default(now())
-
-  updatedAt DateTime @updatedAt
+  tags          String
+  userId        Int?
+  user          User?    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  status        String   @default("pending")
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
 }
+
+

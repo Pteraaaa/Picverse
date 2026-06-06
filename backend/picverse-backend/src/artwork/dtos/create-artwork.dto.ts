@@ -1,17 +1,11 @@
-import { IsEmail, IsNotEmpty, IsString, MinLength } from 'class-validator';
+import { IsNotEmpty, IsString, MinLength, MaxLength, Matches, IsOptional } from 'class-validator';
 
-export class CreateSubmissionDto {
-  @IsEmail(
-    {},
-    {
-      message: 'Invalid email format',
-    }
-  )
-  email!: string;
-
+export class CreateArtworkDto {
   @IsNotEmpty({ message: 'Title is required' })
   @IsString()
   @MinLength(3, { message: 'Title must be at least 3 characters' })
+  @MaxLength(50, { message: 'Title must be at most 50 characters' })
+  @Matches(/^[A-Z]/, { message: 'Title must start with a capital letter' })
   title!: string;
 
   @IsNotEmpty({ message: 'Description is required' })
@@ -20,14 +14,8 @@ export class CreateSubmissionDto {
   description!: string;
 
   @IsNotEmpty({ message: 'Tags are required' })
-  @IsString()
-  tags!: string;
+  tags!: string | string[];
 
-  isAiGenerated?: boolean | string;
-
-  fileName?: string;
-
-  fileUrl?: string;
-
-  userId?: number | string;
+  @IsOptional()
+  isAiGenerated?: string | boolean;
 }

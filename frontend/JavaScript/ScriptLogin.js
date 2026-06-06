@@ -53,47 +53,38 @@ form.addEventListener("submit",async (e) => {
         "Ready for backend login"
     );
 
-    /*
-    later:
+    try {
+        const response = await fetch(`${API_BASE_URL}/auth/login`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                email: emailInput.value,
+                password: passwordInput.value
+            }),
+        });
 
-    const response = await fetch(
-        "http://localhost:3000/auth/login"
-    );
-    */
+        const data = await response.json();
+        console.log("Response status:", response.status, data);
 
-    const response = await fetch("http://localhost:3000/auth/login", {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-            email: emailInput.value,
-            password: passwordInput.value
-        }),
-    });
-
-    console.log(response);
-
-    const data = await response.json();
-
-    console.log(data);
-
-    if (response.ok) {
-        localStorage.setItem("token", data.token);
-
-        localStorage.setItem("user", JSON.stringify(data.user));
-
-        window.location.href = "Home.html";
-    }
-
-    else {
-        if (data.message === "Incorrect email or password") {
-            emailError.textContent = "Incorrect email or password";
-            passwordError.textContent = "Incorrect email or password";
+        if (response.ok) {
+            localStorage.setItem("token", data.token);
+            localStorage.setItem("user", JSON.stringify(data.user));
+            window.location.href = "Home.html";
         }
-
-        return;
+        else {
+            if (data.message === "Incorrect email or password") {
+                emailError.textContent = "Incorrect email or password";
+                passwordError.textContent = "Incorrect email or password";
+            } else {
+                alert(`Login failed: ${data.message || "Unknown error"}`);
+            }
+            return;
+        }
+    } catch (error) {
+        console.error("Login error:", error);
+        alert(`Failed to log in: ${error.message}. Make sure the backend is running at ${API_BASE_URL}`);
     }
-        
-    }
+}
 );

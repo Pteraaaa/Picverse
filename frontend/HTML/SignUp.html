@@ -4,104 +4,79 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Picverse - Sign Up</title>
-
+    <link rel="stylesheet" href="../CSS/style.css">
     <link rel="stylesheet" href="../CSS/signUpStyle.css">
 </head>
 <body>
+    <header>
+        <div class="logo" id="logo">
+            <img src="../Asset/Picverse Logo.png" alt="">
+            Picverse
+        </div>
+        <div class="hamburger" id="hamburger">
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+        <nav class="nav-bar" id="nav-menu">
+            <a href="Home.html">Home</a>
+            <a href="Gallery.html">Gallery</a>
+            <a href="Submission.html">Submission</a>
+            <a href="Community.html">Community</a>
+            <a href="Aboutus.html">About Us</a>
+            <a href="Login.html" id="auth-btn">Login</a>
+        </nav>
+    </header>
 
-<div class="container">
-
-    <!-- LEFT -->
-    <div class="left-panel">
-
-        <div class="overlay">
-            <h1>Picverse</h1>
-
-            <h2>
-                Join the world's premier digital art community.
-            </h2>
-
-            <p>
-                Connect with creators, showcase your artwork,
-                and discover amazing digital masterpieces.
-            </p>
-
-            <div class="features">
-
-                <div class="feature-card">
-                    <span>🎨</span>
-                    <p>Professional Tools</p>
+    <div class="signup-container">
+        <div class="signup-left-panel">
+            <div class="signup-overlay">
+                <h1>Picverse</h1>
+                <h2>Join the world's premier digital art community.</h2>
+                <p>Connect with creators, showcase your artwork, and discover amazing digital masterpieces.</p>
+                <div class="signup-features">
+                    <div class="signup-feature-card">
+                        <span>🎨</span>
+                        <p>Professional Tools</p>
+                    </div>
+                    <div class="signup-feature-card">
+                        <span>👥</span>
+                        <p>Global Network</p>
+                    </div>
+                    <div class="signup-feature-card">
+                        <span>⭐</span>
+                        <p>Curated Content</p>
+                    </div>
                 </div>
-
-                <div class="feature-card">
-                    <span>👥</span>
-                    <p>Global Network</p>
-                </div>
-
-                <div class="feature-card">
-                    <span>⭐</span>
-                    <p>Curated Content</p>
-                </div>
-
             </div>
         </div>
 
-    </div>
+        <div class="signup-right-panel">
+            <div class="signup-form-container">
+                <h2>Create an Account</h2>
+                <p class="signup-subtitle">Enter your details to start your artistic journey.</p>
+                <form id="signupForm">
+                    <label>Full Name</label>
+                    <input type="text" id="name" placeholder="Alex Rivera">
+                    <small id="nameError"></small>
 
-    <!-- RIGHT -->
-    <div class="right-panel">
+                    <label>Email Address</label>
+                    <input type="email" id="email" placeholder="alex@example.com">
+                    <small id="emailError"></small>
 
-        <div class="form-container">
+                    <label>Password</label>
+                    <input type="password" id="password" placeholder="Password">
+                    <small id="passwordError"></small>
 
-            <h2>Create an Account</h2>
-            <p class="subtitle">
-                Enter your details to start your artistic journey.
-            </p>
-
-            <form id="signupForm">
-
-                <label>Full Name</label>
-                <input
-                    type="text"
-                    id="name"
-                    placeholder="Alex Rivera">
-
-                <small id="nameError"></small>
-
-                <label>Email Address</label>
-                <input
-                    type="email"
-                    id="email"
-                    placeholder="alex@example.com">
-
-                <small id="emailError"></small>
-
-                <label>Password</label>
-                <input
-                    type="password"
-                    id="password"
-                    placeholder="Password">
-
-                <small id="passwordError"></small>
-
-                <button type="submit">
-                    Create Account
-                </button>
-
-                <div class="login-link">
-                    Already have an account?
-                    <a href="Login.html">Login</a>
-                </div>
-
-            </form>
-
+                    <button type="submit">Create Account</button>
+                    <div class="signup-login-link">
+                        Already have an account? <a href="Login.html">Login</a>
+                    </div>
+                </form>
+            </div>
         </div>
-
     </div>
-
-</div>
-
-<script src="../JavaScript/ScriptSignUp.js"></script>
-
+    <script src="../JavaScript/ScriptSignUp.js"></script>
+    <script src="../JavaScript/ScriptHamburger.js"></script>
 </body>
 </html>

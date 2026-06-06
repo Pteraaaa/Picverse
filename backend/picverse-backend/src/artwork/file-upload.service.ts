@@ -21,7 +21,7 @@ interface FileUploadStrategy {
 
 @Injectable()
 export class LocalFileUploadStrategy implements FileUploadStrategy {
-  private uploadDir = path.join(process.cwd(), 'uploads', 'submissions');
+  private uploadDir = path.join(process.cwd(), 'uploads', 'artworks');
 
   constructor() {
     this.ensureUploadDirExists();
@@ -40,7 +40,7 @@ export class LocalFileUploadStrategy implements FileUploadStrategy {
     fs.writeFileSync(filePath, file.buffer);
 
     return {
-      fileUrl: `/uploads/submissions/${uniqueFileName}`,
+      fileUrl: `/uploads/artworks/${uniqueFileName}`,
       fileName: file.originalname,
     };
   }
