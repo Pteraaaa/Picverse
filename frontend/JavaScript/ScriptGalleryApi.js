@@ -42,12 +42,47 @@ async function loadTags() {
             `;
         });
 
+        // Parse url parameters for initial tag filter
+        const urlParams = new URLSearchParams(window.location.search);
+        const urlTag = urlParams.get('tag');
+
+        if (urlTag) {
+            // Check if it already exists in fetched tags (case-insensitively)
+            const exists = tags.some(tag => tag.name.toLowerCase() === urlTag.toLowerCase());
+            if (!exists) {
+                tagContainer.innerHTML += `
+                    <a
+                        href="#"
+                        data-tag="${urlTag}">
+                        #${urlTag}
+                    </a>
+                `;
+            }
+        }
+
         attachTagEvents();
 
-        const firstTag = document.querySelector("#tagContainer a");
-        if (firstTag) {
-            firstTag.classList.add("active");
-            firstTag.click();
+        let targetTag = null;
+        if (urlTag) {
+            const pills = tagContainer.querySelectorAll("#tagContainer a");
+            for (const pill of pills) {
+                if (pill.dataset.tag.toLowerCase() === urlTag.toLowerCase()) {
+                    targetTag = pill;
+                    break;
+                }
+            }
+        }
+
+        if (!targetTag) {
+            targetTag = document.querySelector("#tagContainer a");
+        }
+
+        if (targetTag) {
+            document.querySelectorAll("#tagContainer a").forEach(tag => {
+                tag.classList.remove("active");
+            });
+            targetTag.classList.add("active");
+            targetTag.click();
         }
     } catch (error) {
         console.error("Error loading tags:", error);
@@ -230,18 +265,16 @@ function attachArtworkEvents() {
 
     document
         .querySelectorAll(
-            ".artwork img"
+            ".artwork"
         )
-        .forEach(img => {
+        .forEach(card => {
 
-            img.addEventListener(
+            card.addEventListener(
                 "click",
-                () => {
-
-                    const card =
-                        img.closest(
-                            ".artwork"
-                        );
+                (e) => {
+                    if (e.target.closest('.likes')) {
+                        return;
+                    }
 
                     modalImage.src =
                         card.dataset.image;
@@ -382,6 +415,12 @@ document.querySelector(".close").addEventListener("click", () => {
                 "none";
         }
 );
+
+window.addEventListener('click', function(event) {
+    if (event.target === modal) {
+        modal.style.display = 'none';
+    }
+});
 
 // Modal Like Button click logic
 modalLikeBtn.addEventListener("click", async () => {
