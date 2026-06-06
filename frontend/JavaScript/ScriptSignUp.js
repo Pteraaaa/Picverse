@@ -87,41 +87,40 @@ form.addEventListener("submit", async (e) => {
         passwordInput.classList.add("valid");
     }
 
-    if (!valid) return;
+    try {
+        const response = await fetch(
+            `${API_BASE_URL}/auth/register`,
+            {
+                method: "POST",
+                headers: {
+                "Content-Type":
+                    "application/json",
+                },
+                body: JSON.stringify({
+                name: nameInput.value,
+                email: emailInput.value,
+                password: passwordInput.value,
+                }),
+            }
+        );
 
-    const response = await fetch(
-        "http://localhost:3000/auth/register",
-        {
-            method: "POST",
-            headers: {
-            "Content-Type":
-                "application/json",
-            },
-            body: JSON.stringify({
-            name: nameInput.value,
-            email: emailInput.value,
-            password: passwordInput.value,
-            }),
+        const data = await response.json();
+        console.log("Response status:", response.status, data);
+
+        if (response.ok) {
+            alert(data.message || "Registration successful!");
+            window.location.href = "Login.html";
         }
-    );
-
-    console.log(response);
-
-    const data = await response.json();
-
-    console.log(data);
-
-    if (response.ok) {
-
-        alert(data.message);
-
-        window.location.href = "Home.html";
-    }
-    else {
-        if (data.message === "Email already exists") {
-            emailError.textContent = "Email is already taken";
+        else {
+            if (data.message === "Email already exists") {
+                emailError.textContent = "Email is already taken";
+            } else {
+                alert(`Registration failed: ${data.message || "Unknown error"}`);
+            }
+            return;
         }
-
-        return;
+    } catch (error) {
+        console.error("Sign up error:", error);
+        alert(`Failed to register: ${error.message}. Make sure the backend is running at ${API_BASE_URL}`);
     }
 });

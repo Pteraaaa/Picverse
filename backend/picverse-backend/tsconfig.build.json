@@ -1,4 +1,14 @@
 {
   "extends": "./tsconfig.json",
-  "exclude": ["node_modules", "test", "dist", "**/*spec.ts"]
+  "compilerOptions": {
+    "incremental": false
+  },
+  "exclude": [
+    "node_modules",
+    "dist",
+    "prisma",
+    "prisma.config.ts",
+    "test",
+    "**/*spec.ts"
+  ]
 }

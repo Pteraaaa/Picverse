@@ -18,66 +18,49 @@ const modalProfile = document.getElementById("modalProfile");
 
 
 async function loadTags() {
+    try {
+        const response = await fetch(`${API_BASE_URL}/artwork/random-tags`);
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const tags = await response.json();
 
-    const response =
-        await fetch(
-            "http://localhost:3000/artwork/random-tags"
-        );
+        tagContainer.innerHTML = "";
 
-    const tags =
-        await response.json();
+        tags.forEach(tag => {
+            tagContainer.innerHTML += `
+                <a
+                    href="#"
+                    data-tag="${tag.name}">
+                    #${tag.name}
+                </a>
+            `;
+        });
 
-    tagContainer.innerHTML = "";
+        attachTagEvents();
 
-    tags.forEach(tag => {
-
-        tagContainer.innerHTML += `
-            <a
-                href="#"
-                data-tag="${tag.name}">
-
-                #${tag.name}
-
-            </a>
-        `;
-    });
-
-    attachTagEvents();
-
-    const firstTag = document.querySelector("#tagContainer a");
-
-    if (firstTag) {
-        firstTag.classList.add("active");
-
-        firstTag.click();
+        const firstTag = document.querySelector("#tagContainer a");
+        if (firstTag) {
+            firstTag.classList.add("active");
+            firstTag.click();
+        }
+    } catch (error) {
+        console.error("Error loading tags:", error);
     }
-
-    
 }
 
 async function loadArtworks() {
-
     try {
-
         const user = JSON.parse(localStorage.getItem("user"));
-
-        const userId = user ?.id || 0;
-
-        const response =
-            await fetch(
-                "http://localhost:3000/artwork"
-            );
-
-        const artworks =
-            await response.json();
-
-        renderArtworks(
-            artworks
-        );
-
+        const userId = user?.id || 0;
+        const response = await fetch(`${API_BASE_URL}/artwork`);
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const artworks = await response.json();
+        renderArtworks(artworks);
     } catch(error) {
-
-        console.error(error);
+        console.error("Error loading artworks:", error);
     }
 }
 
@@ -163,37 +146,43 @@ function attachTagEvents() {
             link.addEventListener(
                 "click",
                 async (e) => {
+                    try {
+                        e.preventDefault();
 
-                    e.preventDefault();
+                        document.querySelectorAll("#tagContainer a").forEach(tag => {
+                            tag.classList.remove(
+                                "active"
+                            );
+                        });
 
-                    document.querySelectorAll("#tagContainer a").forEach(tag => {
-                        tag.classList.remove(
-                            "active"
+                        e.target.classList.add("active");
+
+                        const tag = e.target.dataset.tag;
+
+                        const user =
+                            JSON.parse(
+                                localStorage.getItem(
+                                    "user"
+                                )
+                            );
+
+                        const userId =
+                            user?.id || 0;
+
+                        const response = await fetch(`${API_BASE_URL}/artwork/tag/${tag}?userId=${userId}`);
+                        if (!response.ok) {
+                            throw new Error(`HTTP error! status: ${response.status}`);
+                        }
+
+                        const artworks =
+                            await response.json();
+
+                        renderArtworks(
+                            artworks
                         );
-                    });
-
-                    e.target.classList.add("active");
-
-                    const tag = e.target.dataset.tag;
-
-                    const user =
-                        JSON.parse(
-                            localStorage.getItem(
-                                "user"
-                            )
-                        );
-
-                    const userId =
-                        user?.id || 0;
-
-                    const response = await fetch(`http://localhost:3000/artwork/tag/${tag}?userId=${userId}`);
-
-                    const artworks =
-                        await response.json();
-
-                    renderArtworks(
-                        artworks
-                    );
+                    } catch (error) {
+                        console.error("Error loading tag artworks:", error);
+                    }
                 }
             );
         });
@@ -277,52 +266,51 @@ function attachLikeEvents() {
                         return;
                     }
 
-                    const response =
-                        await fetch(
+                    try {
+                        const response =
+                            await fetch(
+                                `${API_BASE_URL}/artwork/${artworkId}/like`,
+                                {
+                                    method: "POST",
+                                    headers: {
+                                        "Content-Type":
+                                            "application/json",
+                                    },
+                                    body: JSON.stringify({
+                                        userId:
+                                            user.id,
+                                    }),
+                                }
+                            );
+                        if (!response.ok) {
+                            throw new Error(`HTTP error! status: ${response.status}`);
+                        }
 
-                            `http://localhost:3000/artwork/${artworkId}/like`,
+                        const data =
+                            await response.json();
 
-                            {
+                        
+                        const count =
+                            button.nextElementSibling;
 
-                                method: "POST",
+                        count.textContent =
+                            data.likes;
 
-                                headers: {
+                        if (data.liked) {
 
-                                    "Content-Type":
-                                        "application/json",
-                                },
+                            button.classList.add(
+                                "liked"
+                            );
+                        }
 
-                                body: JSON.stringify({
+                        else {
 
-                                    userId:
-                                        user.id,
-
-                                }),
-                            }
-                        );
-
-                    const data =
-                        await response.json();
-
-                    
-                    const count =
-                        button.nextElementSibling;
-
-                    count.textContent =
-                        data.likes;
-
-                    if (data.liked) {
-
-                        button.classList.add(
-                            "liked"
-                        );
-                    }
-
-                    else {
-
-                        button.classList.remove(
-                            "liked"
-                        );
+                            button.classList.remove(
+                                "liked"
+                            );
+                        }
+                    } catch (error) {
+                        console.error("Error liking artwork:", error);
                     }
                 }
             );

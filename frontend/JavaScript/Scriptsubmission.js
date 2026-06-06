@@ -1,16 +1,31 @@
+// Check for token on page load to protect this frontend route
+document.addEventListener("DOMContentLoaded", function () {
+    const token = localStorage.getItem("token");
+    if (!token) {
+        alert("Please login first to access the submission page.");
+        window.location.href = "Login.html";
+    }
+});
+
 const submissionForm = document.getElementById("submissionForm");
 
 submissionForm.addEventListener("submit", async function (event) {
     event.preventDefault();
 
-    document.getElementById('emailError').textContent = '';
+    // Check for token on form submission
+    const token = localStorage.getItem("token");
+    if (!token) {
+        alert("Please login first to submit an artwork.");
+        window.location.href = "Login.html";
+        return;
+    }
+
     document.getElementById('titleError').textContent = '';
     document.getElementById('descriptionError').textContent = '';
     document.getElementById('tagsError').textContent = '';
     document.getElementById('fileError').textContent = '';
     document.getElementById('aiError').textContent = '';
     
-    const email = document.getElementById("email").value.trim();
     const title = document.getElementById("title").value.trim();
     const description = document.getElementById("description").value.trim();
     const tags = document.getElementById("tags").value.trim();
@@ -19,13 +34,7 @@ submissionForm.addEventListener("submit", async function (event) {
 
     let isValid = true;
 
-    if(email == ''){
-        isValid = false;
-        document.getElementById('emailError').textContent = "Email is required";
-    } else if(!email.includes("@") || !email.includes(".")) {
-        isValid = false;
-        document.getElementById('emailError').textContent = "Please enter a valid email address";
-    }
+
 
     if(title == ''){
         isValid = false;
@@ -88,28 +97,44 @@ submissionForm.addEventListener("submit", async function (event) {
     }
 
     // Submit to backend
-    await submitToBackend(email, title, description, tags, artwork, aiGenerated.value);
+    await submitToBackend(title, description, tags, artwork, aiGenerated.value);
 });
 
-async function submitToBackend(email, title, description, tags, artwork, aiGenerated) {
+async function submitToBackend(title, description, tags, artwork, aiGenerated) {
+    const token = localStorage.getItem("token");
+    if (!token) {
+        alert("Please login first to submit an artwork.");
+        window.location.href = "Login.html";
+        return;
+    }
+
     const formData = new FormData();
-    formData.append('email', email);
     formData.append('title', title);
     formData.append('description', description);
     formData.append('tags', tags);
     formData.append('isAiGenerated', aiGenerated === 'yes');
     formData.append('artwork', artwork);
-    // Don't send userId - backend will handle it as optional
 
     try {
-        console.log('Submitting to backend...', { email, title, tags, aiGenerated });
+        console.log('Submitting to backend...', { title, tags, aiGenerated });
         
-        const response = await fetch('http://localhost:3000/submission/create', {
+        const response = await fetch(`${API_BASE_URL}/artwork/create`, {
             method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${token}`
+            },
             body: formData,
         });
 
         console.log('Response received:', response.status, response.statusText);
+
+        if (response.status === 401) {
+            alert("Your session has expired or you are unauthorized. Please log in again.");
+            localStorage.removeItem("token");
+            localStorage.removeItem("user");
+            window.location.href = "Login.html";
+            return;
+        }
         
         const result = await response.json();
         console.log('Response data:', result);
@@ -126,7 +151,7 @@ async function submitToBackend(email, title, description, tags, artwork, aiGener
 
     } catch (error) {
         console.error('Error details:', error);
-        alert(`Error submitting artwork: ${error.message}. Make sure the backend is running on http://localhost:3000`);
+        alert(`Error submitting artwork: ${error.message}. Make sure the backend is running on ${API_BASE_URL}`);
     }
 }
 
