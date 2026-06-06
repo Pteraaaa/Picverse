@@ -6,11 +6,12 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import type { UploadFile } from './file-upload.service';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { CurrentUser } from '../auth/decorators/current-user.decorator';
+import { ArtworkFacade } from './artwork.facade';
 
 @Controller('artwork')
 export class ArtworkController {
     constructor(
-        private readonly artworkService: ArtworkService
+        private readonly artworkFacade: ArtworkFacade
     ) { }
 
     @Post('create')
@@ -22,32 +23,32 @@ export class ArtworkController {
         @UploadedFile() file: UploadFile,
         @CurrentUser() user: any,
     ) {
-        return this.artworkService.createArtwork(dto, file, user.id);
+        return this.artworkFacade.createArtwork(dto, file, user.id);
     }
     
     @Get()
     getAllArtworks(@Query('userId') userId: string, @Query('sort') sort?: string) {
-        return this.artworkService.getAllArtworks(Number(userId), sort);
+        return this.artworkFacade.getAllArtworks(Number(userId), sort);
     }
 
     @Get('tag/:tag')
     getByTag(@Param('tag') tag: string, @Query('userId') userId: string, @Query('sort') sort?: string) {
-        return this.artworkService.getByTag(tag, Number(userId), sort);
+        return this.artworkFacade.getByTag(tag, Number(userId), sort);
     }
 
     @Get('random-tags')
     getRandomTag() {
-        return this.artworkService.getRandomTags();
+        return this.artworkFacade.getRandomTags();
     }
 
     @Get('tags')
     getAllTags() {
-        return this.artworkService.getAllTags();
+        return this.artworkFacade.getAllTags();
     }
 
     @Post(':id/like')
     async toggleLike(@Param('id')id:String, @Body() dto: LikeArtworkDto) {
-        return this.artworkService.toggleLike(dto.userId, Number(id));
+        return this.artworkFacade.toggleLike(dto.userId, Number(id));
     }
 
 }

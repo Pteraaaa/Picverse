@@ -4,10 +4,11 @@ import { ArtworkService } from './artwork.service';
 import { AuthModule } from '../auth/auth.module';
 import { FileUploadService } from './file-upload.service';
 import { TagFactory } from './tag.factory';
+import { ArtworkFacade } from './artwork.facade';
 
 @Module({
   imports: [AuthModule],
   controllers: [ArtworkController],
-  providers: [ArtworkService, FileUploadService, TagFactory]
+  providers: [ArtworkService, FileUploadService, TagFactory, ArtworkFacade]
 })
 export class ArtworkModule {}
