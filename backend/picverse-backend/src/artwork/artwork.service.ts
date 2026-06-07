@@ -4,78 +4,19 @@ import { FileUploadService, UploadFile } from './file-upload.service';
 import { TagFactory } from './tag.factory';
 import { EventBusService } from 'src/common/event/event.bus.service';
 import { ArtworkRepository } from './artwork.repository';
+import { ArtworkRepositoryProxy } from './artwork.repository.proxy';
 import { ArtworkCreationTemplate } from 'src/common/template/artwork.template';
 
 @Injectable()
 export class ArtworkService {
     constructor(
-        private fileUploadService: FileUploadService,
-        private tagFactory: TagFactory,
+        private artworkRepositoryProxy: ArtworkRepositoryProxy,
         private artworkCreateTemplate: ArtworkCreationTemplate,
         private eventBus: EventBusService,
         private artworkRepository: ArtworkRepository
     ) {}
 
     async createArtwork(dto: CreateArtworkDto, file: UploadFile, userId: number) {
-        // if (!file) {
-        //     throw new BadRequestException('File is required');
-        // }
-
-        // const validMimeTypes = ['image/jpeg', 'image/png', 'image/jpg'];
-        // if (!validMimeTypes.includes(file.mimetype)) {
-        //     throw new BadRequestException('Invalid file type. Only JPEG and PNG are allowed');
-        // }
-
-        // const { fileUrl } = await this.fileUploadService.uploadFile(file);
-
-        // // Parse tags from input (which can be array, or space/comma/hash separated string)
-        // let tagNames: string[] = [];
-        // if (Array.isArray(dto.tags)) {
-        //     tagNames = dto.tags;
-        // } else if (typeof dto.tags === 'string') {
-        //     tagNames = dto.tags
-        //         .split(/[\s,#]+/)
-        //         .map(t => t.trim())
-        //         .filter(t => t.length > 0);
-        // }
-
-        // // Clean standard/custom tags via Factory
-        // const processedTags = tagNames.map(name => {
-        //     const standardTagsList = ['digitalart', 'portrait', 'anime', 'fantasy', 'cyberpunk', 'aiart', 'nature', 'photography', 'abstract', 'pixelart', 'character'];
-        //     const isStandard = standardTagsList.includes(name.toLowerCase());
-        //     return this.tagFactory.createTag(name, !isStandard);
-        // });
-
-        // // AI Art auto-tagging logic
-        // const isAi = dto.isAiGenerated === true || dto.isAiGenerated === 'true' || dto.isAiGenerated === 'yes';
-        // if (isAi) {
-        //     const hasAiTag = processedTags.some(t => t.name.toLowerCase() === 'aiart');
-        //     if (!hasAiTag) {
-        //         processedTags.push(this.tagFactory.createTag('AIart', false));
-        //     }
-        // }
-
-        // const artwork = await this.artworkRepository.createArtwork({
-        //     data: {
-        //         title: dto.title,
-        //         description: dto.description,
-        //         imageUrl: fileUrl,
-        //         userId: userId,
-        //         tags: {
-        //             connectOrCreate: processedTags.map(tag => ({
-        //                 where: { name: tag.name },
-        //                 create: { name: tag.name }
-        //             }))
-        //         }
-        //     },
-        //     include: {
-        //         user: true,
-        //         tags: true
-        //     }
-        // });
-
-        // return artwork;
-
         return this.artworkCreateTemplate.run({ dto, file, userId });
     }
 
@@ -87,7 +28,7 @@ export class ArtworkService {
             orderBy = { likes: 'desc' };
         }
 
-        const artworks = await this.artworkRepository.findAll(orderBy);
+        const artworks = await this.artworkRepositoryProxy.findAll(orderBy);
         
         return artworks.map(
             artwork => ({
@@ -107,7 +48,7 @@ export class ArtworkService {
             orderBy = { likes: 'desc' };
         }
 
-        const artworks = await this.artworkRepository.findByTag(
+        const artworks = await this.artworkRepositoryProxy.findByTag(
             tagName,
             orderBy,
         );
@@ -122,17 +63,17 @@ export class ArtworkService {
     }
 
     async getRandomTags() {
-        const tags = await this.artworkRepository.findRandomTags();
+        const tags = await this.artworkRepositoryProxy.findRandomTags();
 
         return tags.sort(() => Math.random() - 0.5).slice(0, 5);
     }
 
     async getTrendingTags() {
-        return this.artworkRepository.findTrendingTags();
+        return this.artworkRepositoryProxy.findTrendingTags();
     }
 
     async getFeaturedArtworks(userId?: number) {
-        const artworks = await this.artworkRepository.findFeaturedArtworks();
+        const artworks = await this.artworkRepositoryProxy.findFeaturedArtworks();
 
         return artworks.map(artwork => ({
             ...artwork,
@@ -141,11 +82,11 @@ export class ArtworkService {
     }
 
     async getBannerArtworks() {
-        return this.artworkRepository.findBannerArtworks();
+        return this.artworkRepositoryProxy.findBannerArtworks();
     }
 
     async getAllTags() {
-        return this.artworkRepository.findAllTags();
+        return this.artworkRepositoryProxy.findAllTags();
     }
 
     async toggleLike(
@@ -160,6 +101,8 @@ export class ArtworkService {
 
         await this.artworkRepository.deleteLike(userId, artworkId);
 
+        this.artworkRepositoryProxy.clearCache();
+
         const artwork =
             await this.artworkRepository.decrementLikes(artworkId);
 
@@ -171,7 +114,9 @@ export class ArtworkService {
         };
     }
 
-    await this.artworkRepository.createLike(userId, artworkId);
+        await this.artworkRepository.createLike(userId, artworkId);
+        
+        this.artworkRepositoryProxy.clearCache();
 
     const artwork =
         await this.artworkRepository.incrementLikes(artworkId);

@@ -4,6 +4,7 @@ import { CreateArtworkDto } from '../../artwork/dtos/create-artwork.dto';
 import { FileUploadService, UploadFile } from '../../artwork/file-upload.service';
 import { TagFactory } from '../../artwork/tag.factory';
 import { ArtworkRepository } from '../../artwork/artwork.repository';
+import { ArtworkRepositoryProxy } from 'src/artwork/artwork.repository.proxy';
 import { EventBusService } from 'src/common/event/event.bus.service';
 
 type Input = { dto: CreateArtworkDto; file: UploadFile; userId: number };
@@ -15,6 +16,7 @@ export class ArtworkCreationTemplate extends BaseTemplate<Input, Output> {
     private fileUploadService: FileUploadService,
     private tagFactory: TagFactory,
     private artworkRepository: ArtworkRepository,
+    private artworkRepostioryProxy: ArtworkRepositoryProxy,
     private eventBus: EventBusService,
   ) { super(); }
 
