@@ -162,39 +162,3 @@ body {
     background: white;
     border-radius: 8px;
 }
-
-/* FOOTER */
-
-footer {
-    margin-top: 80px;
-
-    background: white;
-    border-top: 1px solid #eee;
-
-    padding: 30px 50px;
-
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    flex-wrap: wrap;
-}
-
-.footer-logo {
-    font-size: 28px;
-    font-weight: bold;
-    color: #c25400;
-}
-
-.footer-links {
-    display: flex;
-    gap: 25px;
-}
-
-.footer-links a {
-    text-decoration: none;
-    color: #333;
-}
-
-.copyright {
-    color: #666;
-}
