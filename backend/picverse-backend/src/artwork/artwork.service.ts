@@ -1,17 +1,17 @@
 import { Injectable, BadRequestException } from '@nestjs/common';
-import { PrismaService } from 'src/common/prisma/prisma.service';
 import { CreateArtworkDto } from './dtos/create-artwork.dto';
 import { FileUploadService, UploadFile } from './file-upload.service';
 import { TagFactory } from './tag.factory';
 import { EventBusService } from 'src/common/event/event.bus.service';
+import { ArtworkRepository } from './artwork.repository';
 
 @Injectable()
 export class ArtworkService {
     constructor(
-        private prisma: PrismaService,
         private fileUploadService: FileUploadService,
         private tagFactory: TagFactory,
-        private eventBus: EventBusService
+        private eventBus: EventBusService,
+        private artworkRepository: ArtworkRepository
     ) {}
 
     async createArtwork(dto: CreateArtworkDto, file: UploadFile, userId: number) {
@@ -53,7 +53,7 @@ export class ArtworkService {
             }
         }
 
-        const artwork = await this.prisma.artwork.create({
+        const artwork = await this.artworkRepository.createArtwork({
             data: {
                 title: dto.title,
                 description: dto.description,
@@ -83,14 +83,7 @@ export class ArtworkService {
             orderBy = { likes: 'desc' };
         }
 
-        const artworks = await this.prisma.artwork.findMany({
-            orderBy,
-            include: {
-                user: true,
-                tags: true,
-                artworkLikes: true,
-            }
-        });
+        const artworks = await this.artworkRepository.findAll(orderBy);
         
         return artworks.map(
             artwork => ({
@@ -110,21 +103,10 @@ export class ArtworkService {
             orderBy = { likes: 'desc' };
         }
 
-        const artworks = await this.prisma.artwork.findMany({
-            where: {
-                tags: {
-                    some: {
-                        name: tagName
-                    }
-                }
-            },
+        const artworks = await this.artworkRepository.findByTag(
+            tagName,
             orderBy,
-            include: {
-                user: true,
-                tags: true,
-                artworkLikes: true,
-            }
-        });
+        );
         return artworks.map(
             artwork => ({
                 ...artwork,
@@ -136,33 +118,17 @@ export class ArtworkService {
     }
 
     async getRandomTags() {
-        const tags = await this.prisma.tag.findMany();
+        const tags = await this.artworkRepository.findRandomTags();
 
         return tags.sort(() => Math.random() - 0.5).slice(0, 5);
     }
 
     async getTrendingTags() {
-        return this.prisma.tag.findMany({
-            orderBy: {
-                artworks: {
-                    _count: 'desc'
-                }
-            },
-            take: 6
-        });
+        return this.artworkRepository.findTrendingTags();
     }
 
     async getFeaturedArtworks(userId?: number) {
-        const artworks = await this.prisma.artwork.findMany({
-            where: {
-                isFeatured: true
-            },
-            include: {
-                user: true,
-                tags: true,
-                artworkLikes: true
-            }
-        });
+        const artworks = await this.artworkRepository.findFeaturedArtworks();
 
         return artworks.map(artwork => ({
             ...artwork,
@@ -171,24 +137,11 @@ export class ArtworkService {
     }
 
     async getBannerArtworks() {
-        return this.prisma.artwork.findMany({
-            where: {
-                isBanner: true
-            },
-            include: {
-                user: true
-            }
-        });
+        return this.artworkRepository.findBannerArtworks();
     }
 
-
-
     async getAllTags() {
-        return this.prisma.tag.findMany({
-            orderBy: {
-                name: 'asc'
-            }
-        });
+        return this.artworkRepository.findAllTags();
     }
 
     async toggleLike(
@@ -197,46 +150,14 @@ export class ArtworkService {
 ) {
 
     const existingLike =
-        await this.prisma.artworkLikes.findUnique({
-
-            where: {
-
-                userId_artworkId: {
-
-                    userId,
-                    artworkId,
-                },
-            },
-        });
+        await this.artworkRepository.findLike(userId, artworkId);
 
     if (existingLike) {
 
-        await this.prisma.artworkLikes.delete({
-
-            where: {
-
-                userId_artworkId: {
-
-                    userId,
-                    artworkId,
-                },
-            },
-        });
+        await this.artworkRepository.deleteLike(userId, artworkId);
 
         const artwork =
-            await this.prisma.artwork.update({
-
-                where: {
-                    id: artworkId,
-                },
-
-                data: {
-
-                    likes: {
-                        decrement: 1,
-                    },
-                },
-            });
+            await this.artworkRepository.decrementLikes(artworkId);
 
         return {
 
@@ -246,36 +167,18 @@ export class ArtworkService {
         };
     }
 
-    await this.prisma.artworkLikes.create({
-
-        data: {
-
-            userId,
-            artworkId,
-        },
-    });
+    await this.artworkRepository.createLike(userId, artworkId);
 
     const artwork =
-        await this.prisma.artwork.update({
-
-            where: {
-                id: artworkId,
-            },
-
-            data: {
-
-                likes: {
-                    increment: 1,
-                },
-            },
-            include: {user:true}
-        });
+        await this.artworkRepository.incrementLikes(artworkId);
 
         if (artwork.userId !== userId) {
+            const likedByUserName = await this.artworkRepository.findUserById(userId);
+
             this.eventBus.emit('artwork.liked', {
                 ownerId: artwork.userId,
                 likedByUserId: userId,
-                likedByUserName: 'Someone',
+                likedByUserName: likedByUserName?.name,
                 artworkId: artwork.id,
                 artworkTitle: artwork.title
             })
