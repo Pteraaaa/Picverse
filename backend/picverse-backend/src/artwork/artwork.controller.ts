@@ -11,7 +11,8 @@ import { ArtworkFacade } from './artwork.facade';
 @Controller('artwork')
 export class ArtworkController {
     constructor(
-        private readonly artworkFacade: ArtworkFacade
+        private readonly artworkFacade: ArtworkFacade,
+        private readonly artworkService: ArtworkService
     ) { }
 
     @Post('create')
@@ -34,6 +35,21 @@ export class ArtworkController {
     @Get('tag/:tag')
     getByTag(@Param('tag') tag: string, @Query('userId') userId: string, @Query('sort') sort?: string) {
         return this.artworkFacade.getByTag(tag, Number(userId), sort);
+    }
+
+    @Get('banner')
+    getBannerArtworks() {
+        return this.artworkService.getBannerArtworks();
+    }
+
+    @Get('featured')
+    getFeaturedArtworks(@Query('userId') userId?: string) {
+        return this.artworkService.getFeaturedArtworks(userId ? Number(userId) : undefined);
+    }
+
+    @Get('tags/trending')
+    getTrendingTags() {
+        return this.artworkService.getTrendingTags();
     }
 
     @Get('random-tags')

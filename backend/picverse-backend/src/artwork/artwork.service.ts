@@ -139,6 +139,48 @@ export class ArtworkService {
         return tags.sort(() => Math.random() - 0.5).slice(0, 5);
     }
 
+    async getTrendingTags() {
+        return this.prisma.tag.findMany({
+            orderBy: {
+                artworks: {
+                    _count: 'desc'
+                }
+            },
+            take: 6
+        });
+    }
+
+    async getFeaturedArtworks(userId?: number) {
+        const artworks = await this.prisma.artwork.findMany({
+            where: {
+                isFeatured: true
+            },
+            include: {
+                user: true,
+                tags: true,
+                artworkLikes: true
+            }
+        });
+
+        return artworks.map(artwork => ({
+            ...artwork,
+            liked: userId ? artwork.artworkLikes.some(like => like.userId === userId) : false
+        }));
+    }
+
+    async getBannerArtworks() {
+        return this.prisma.artwork.findMany({
+            where: {
+                isBanner: true
+            },
+            include: {
+                user: true
+            }
+        });
+    }
+
+
+
     async getAllTags() {
         return this.prisma.tag.findMany({
             orderBy: {

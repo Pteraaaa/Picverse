@@ -7,7 +7,7 @@
     <link rel="stylesheet" href="../CSS/style.css">
     <link rel="icon" type="image/png" href="../Asset/Picverse Logo.png">
 </head>
-<body>
+<body id="about-page">
     <header>
         <a href="Home.html" class="logo">
             <img src="../Asset/Picverse Logo.png" alt="">
@@ -22,7 +22,6 @@
             <a href="Home.html" >Home</a>
             <a href="Gallery.html">Gallery</a>
             <a href="Submission.html">Submission</a>
-            <a href="Community.html">Community</a>
             <a href="Aboutus.html" class="selected">About Us</a>
             <a href="Login.html" id="auth-btn">Login</a>
         </nav>
@@ -30,44 +29,81 @@
 
     <content>
         <div class="aboutus-wrapper">
-            <div class="vision">
-                <h1 class="section-title">Vision</h1>
-                <p>To become the leading digital space where artists around the world unite to express creativity, inspire one another, and celebrate visual storytelling.</p>
+            <!-- Hero Header -->
+            <div class="about-hero">
+                <h1 class="about-hero-title">About Picverse</h1>
+                <p class="about-hero-subtitle">Discover. Share. Inspire. Connecting digital creators worldwide.</p>
             </div>
-            <div class="mission">
-                <h1 class="section-title">Mission</h1>
-                <p>1. Empower Digital Artists by providing a platform to showcase and promote their artworks to a global audience.</p>
-                <p>2. Foster a Creative Community where artists can interact, collaborate, and grow through feedback and shared experiences.</p>  
-                <p>3. Encourage Artistic Discovery by curating diverse and inspiring visual content across various styles and mediums.</p>
+
+            <!-- Vision & Mission Grid -->
+            <div class="vision-mission-grid">
+                <div class="about-card vision-card">
+                    <div class="card-icon">👁️</div>
+                    <h2 class="card-title">Our Vision</h2>
+                    <p class="card-text">To become the leading digital space where artists around the world unite to express creativity, inspire one another, and celebrate visual storytelling.</p>
+                </div>
+                
+                <div class="about-card mission-card">
+                    <div class="card-icon">🚀</div>
+                    <h2 class="card-title">Our Mission</h2>
+                    <ul class="mission-list">
+                        <li>
+                            <span class="list-num">1</span>
+                            <div class="list-content">
+                                <strong>Empower Digital Artists</strong>
+                                <p>Providing a professional platform to showcase and promote visual masterpieces to a global audience.</p>
+                            </div>
+                        </li>
+                        <li>
+                            <span class="list-num">2</span>
+                            <div class="list-content">
+                                <strong>Foster Creative Growth</strong>
+                                <p>Creating spaces for artists to interact, share knowledge, and level up their craft through collective inspiration.</p>
+                            </div>
+                        </li>
+                        <li>
+                            <span class="list-num">3</span>
+                            <div class="list-content">
+                                <strong>Encourage Exploration</strong>
+                                <p>Curating diverse and high-quality visual content across styles, making discovery natural and exciting.</p>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
             </div>
-            <div class="features">
-                <h1 class="section-title">Main Key Features</h1>
-                <div class="features-card">
-                    <img src="../Asset/About Us/HTML, CSS, JS/Artwork Gallery.png" alt="">
-                    <div class="info-features">
-                        <strong>Artwork Gallery</strong>
-                        <p>A dynamic and categorized gallery where users can explore digital artworks.</p>
+
+            <!-- Main Key Features -->
+            <div class="features-section">
+                <h2 class="features-section-title">Main Key Features</h2>
+                <div class="features-list">
+                    <div class="feature-item">
+                        <div class="feature-img-wrapper">
+                            <img src="../Asset/About Us/HTML, CSS, JS/Artwork Gallery.png" alt="Artwork Gallery">
+                        </div>
+                        <div class="feature-info">
+                            <h3>Artwork Gallery</h3>
+                            <p>Explore a dynamic, responsive gallery showcasing digital artworks. Filter by tags and sort by newest or popularity to find exactly what inspires you.</p>
+                        </div>
                     </div>
-                </div>
-                <div class="features-card">
-                    <img src="../Asset/About Us/HTML, CSS, JS/Artist Submission Portal.png" alt="">
-                    <div class="info-features">
-                        <strong>Artist Submission Portal</strong>
-                        <p>A user-friendly submission form allowing artists to upload and describe their works.</p>
+
+                    <div class="feature-item reverse">
+                        <div class="feature-img-wrapper">
+                            <img src="../Asset/About Us/HTML, CSS, JS/Artist Submission Portal.png" alt="Artist Submission Portal">
+                        </div>
+                        <div class="feature-info">
+                            <h3>Artist Submission Portal</h3>
+                            <p>Submit your artwork easily with our user-friendly form. Add custom tags and descriptions to help other collectors and creators find your work.</p>
+                        </div>
                     </div>
-                </div>
-                <div class="features-card">
-                    <img src="../Asset/About Us/HTML, CSS, JS/Community Forum.png" alt="">
-                    <div class="info-features">
-                        <strong>Community Forum</strong>
-                        <p>An interactive discussion space where users can join forums, follow topics, comment, and collaborate with fellow creatives.</p>
-                    </div>
-                </div>
-                <div class="features-card">
-                    <img src="../Asset/About Us/HTML, CSS, JS/Featured Artworks.png" alt="">
-                    <div class="info-features">
-                        <strong>Featured Artworks</strong>
-                        <p>Highlighted artworks selected based on popularity or community votes, increasing exposure for standout creators.</p>
+
+                    <div class="feature-item">
+                        <div class="feature-img-wrapper">
+                            <img src="../Asset/About Us/HTML, CSS, JS/Featured Artworks.png" alt="Featured Artworks">
+                        </div>
+                        <div class="feature-info">
+                            <h3>Featured Artworks</h3>
+                            <p>Celebrate standout pieces curated directly from our community's favorites. High-visibility exposure for talented creators.</p>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -80,7 +116,6 @@
                 <a href="Home.html">Home</a>
                 <a href="Gallery.html">Gallery</a>
                 <a href="Submission.html">Submission</a>
-                <a href="Community.html">Community</a>
                 <a href="Aboutus.html">About Us</a>
             </nav>
             <a href="Home.html" class="logo-nav">
