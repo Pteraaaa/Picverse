@@ -10,9 +10,8 @@ export class ArtworkFacade {
     private readonly artworkService: ArtworkService,
   ) {}
 
-  async createArtwork(dto: CreateArtworkDto, file: UploadFile, user: any) {
-    const artwork = await this.artworkService.createArtwork(dto, file, user.id);
-
+  async createArtwork(dto: CreateArtworkDto, file: UploadFile, userId: number) {
+    const artwork = await this.artworkService.createArtwork(dto, file, userId);
 
     return artwork;
   }

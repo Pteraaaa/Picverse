@@ -116,6 +116,21 @@ async function submitToBackend(title, description, tags, artwork, aiGenerated) {
     formData.append('isAiGenerated', aiGenerated === 'yes');
     formData.append('artwork', artwork);
 
+    // Retrieve user from localStorage to get userId
+    const userStr = localStorage.getItem("user");
+    let userId = 1; // Default to 1 if not found
+    if (userStr) {
+        try {
+            const userObj = JSON.parse(userStr);
+            if (userObj && userObj.id) {
+                userId = userObj.id;
+            }
+        } catch (e) {
+            console.error("Error parsing user from localStorage:", e);
+        }
+    }
+    formData.append('userId', userId);
+
     try {
         console.log('Submitting to backend...', { title, tags, aiGenerated });
         

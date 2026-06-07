@@ -1,33 +1,19 @@
-import { ArtworkNotification }
-from '../../notification/artwork.notification';
-
-import { ForumNotification }
-from '../../notification/forum.notification';
-
-import { WelcomeNotification }
-from '../../notification/welcome.notification';
+// ...existing code...
+import { Notification } from 'src/notification/notification.interface';
+import { WelcomeNotification } from 'src/notification/welcome.notification';
+import { ArtworkNotification } from 'src/notification/artwork.notification';
 
 export class NotificationFactory {
-
-    static create(
-        type: string,
-    ) {
-
-        switch (type) {
-
-            case "WELCOME":
-                return new WelcomeNotification();
-
-            case "ARTWORK":
-                return new ArtworkNotification();
-
-            case "FORUM":
-                return new ForumNotification();
-
-            default:
-                throw new Error(
-                    "Unknown notification type"
-                );
-        }
+  static create(type: 'WELCOME'): WelcomeNotification;
+  static create(type: 'ARTWORK'): ArtworkNotification;
+  static create(type: string): Notification {
+    switch (type) {
+      case 'WELCOME':
+        return new WelcomeNotification();
+      case 'ARTWORK':
+        return new ArtworkNotification();
+      default:
+        throw new Error('Unknown notification type');
     }
+  }
 }

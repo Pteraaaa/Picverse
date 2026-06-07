@@ -3,6 +3,7 @@ import { PrismaService } from 'src/common/prisma/prisma.service';
 import { CreateArtworkDto } from './dtos/create-artwork.dto';
 import { FileUploadService, UploadFile } from './file-upload.service';
 import { TagFactory } from './tag.factory';
+import { EventBusService } from 'src/common/event/event.bus.service';
 
 @Injectable()
 export class ArtworkService {
@@ -10,6 +11,7 @@ export class ArtworkService {
         private prisma: PrismaService,
         private fileUploadService: FileUploadService,
         private tagFactory: TagFactory,
+        private eventBus: EventBusService
     ) {}
 
     async createArtwork(dto: CreateArtworkDto, file: UploadFile, userId: number) {
@@ -266,7 +268,18 @@ export class ArtworkService {
                     increment: 1,
                 },
             },
+            include: {user:true}
         });
+
+        if (artwork.userId !== userId) {
+            this.eventBus.emit('artwork.liked', {
+                ownerId: artwork.userId,
+                likedByUserId: userId,
+                likedByUserName: 'Someone',
+                artworkId: artwork.id,
+                artworkTitle: artwork.title
+            })
+        }
 
     return {
 

@@ -37,10 +37,6 @@ export class AuthService {
             data: user
         });
 
-        const notification = NotificationFactory.create("WELCOME");
-
-        await notification.send(createdUser.id, "Welcome to Picverse!");
-
         return {
             message: 'User registered successfully',
             userId: createdUser.id

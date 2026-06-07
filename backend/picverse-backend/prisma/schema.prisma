@@ -3,71 +3,52 @@ generator client {
 }
 
 datasource db {
-  provider  = "postgresql"
+  provider = "postgresql"
 }
 
 model User {
-  id Int @id @default(autoincrement())
-
-  name String
-
-  email String @unique
-
-  password String
-
-  profilePicture String?
-
-  artworks Artwork[]
-
-  createdAt    DateTime       @default(now())
-  artworkLikes ArtworkLikes[]
-  submissions  Submission[]
+  id                                          Int            @id @default(autoincrement())
+  name                                        String
+  email                                       String         @unique
+  password                                    String
+  createdAt                                   DateTime       @default(now())
+  profilePicture                              String?
+  artworks                                    Artwork[]
+  artworkLikes                                ArtworkLikes[]
+  Notification_Notification_recipientIdToUser Notification[] @relation("Notification_recipientIdToUser")
+  Notification_Notification_senderIdToUser    Notification[] @relation("Notification_senderIdToUser")
+  submissions                                 Submission[]
 }
 
 model Artwork {
-  id Int @id @default(autoincrement())
-
-  title String
-
-  description String
-
-  imageUrl String
-
-  likes Int @default(0)
-
-  isFeatured Boolean @default(false)
-
-  isBanner Boolean @default(false)
-
-  userId Int
-
-  user User @relation(fields: [userId], references: [id])
-
-  tags Tag[]
-
-  createdAt DateTime @default(now())
-
+  id           Int            @id @default(autoincrement())
+  title        String
+  description  String
+  imageUrl     String
+  likes        Int            @default(0)
+  userId       Int
+  createdAt    DateTime       @default(now())
+  isFeatured   Boolean        @default(false)
+  isBanner     Boolean        @default(false)
+  user         User           @relation(fields: [userId], references: [id])
   artworkLikes ArtworkLikes[]
+  Notification Notification[]
+  tags         Tag[]          @relation("ArtworkToTag")
 }
 
 model ArtworkLikes {
-  userId Int
-
+  userId    Int
   artworkId Int
-
-  user User? @relation(fields: [userId], references: [id])
-
-  artwork Artwork? @relation(fields: [artworkId], references: [id])
+  artwork   Artwork @relation(fields: [artworkId], references: [id])
+  user      User    @relation(fields: [userId], references: [id])
 
   @@id([userId, artworkId])
 }
 
 model Tag {
-  id Int @id @default(autoincrement())
-
-  name String @unique
-
-  artworks Artwork[]
+  id       Int       @id @default(autoincrement())
+  name     String    @unique
+  artworks Artwork[] @relation("ArtworkToTag")
 }
 
 model Submission {
@@ -80,10 +61,25 @@ model Submission {
   isAiGenerated Boolean
   tags          String
   userId        Int?
-  user          User?    @relation(fields: [userId], references: [id], onDelete: Cascade)
   status        String   @default("pending")
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
+  user          User?    @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
+model Notification {
+  id                                  Int      @id @default(autoincrement())
+  recipientId                         Int
+  senderId                            Int?
+  artworkId                           Int?
+  type                                String
+  message                             String
+  isRead                              Boolean  @default(false)
+  createdAt                           DateTime @default(now())
+  Artwork                             Artwork? @relation(fields: [artworkId], references: [id], onDelete: Cascade)
+  User_Notification_recipientIdToUser User     @relation("Notification_recipientIdToUser", fields: [recipientId], references: [id], onDelete: Cascade)
+  User_Notification_senderIdToUser    User?    @relation("Notification_senderIdToUser", fields: [senderId], references: [id], onDelete: Cascade)
 
+  @@index([isRead])
+  @@index([recipientId])
+}

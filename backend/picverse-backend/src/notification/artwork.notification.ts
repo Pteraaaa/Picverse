@@ -1,14 +1,15 @@
-import { Notification } from "./notification.interface";
+// filepath: src/notification/artwork.notification.ts
+// ...existing code...
+import { Notification } from './notification.interface';
 
 export class ArtworkNotification implements Notification {
+  type = 'ARTWORK';
 
-    async send(
-        userId: number,
-        message: string
-    ) {
+  buildMessage(payload: { likedByName: string; artworkTitle: string }): string {
+    return `${payload.likedByName} liked your artwork "${payload.artworkTitle}"`;
+  }
 
-        console.log(
-            `Artwork notification sent to ${userId}`
-        );
-    }
+  send(payload: { likedByName: string; artworkTitle: string }): string {
+    return this.buildMessage(payload);
+  }
 }

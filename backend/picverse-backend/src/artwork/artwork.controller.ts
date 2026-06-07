@@ -22,9 +22,10 @@ export class ArtworkController {
     async createArtwork(
         @Body() dto: CreateArtworkDto,
         @UploadedFile() file: UploadFile,
-        @CurrentUser() user: any,
+        @Body('userId') bodyUserId: string,
     ) {
-        return this.artworkFacade.createArtwork(dto, file, user.id);
+        const parsedUserId = parseInt(bodyUserId, 10);
+        return this.artworkFacade.createArtwork(dto, file, parsedUserId);
     }
     
     @Get()

@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Notifications | Picverse</title>
+    <link rel="stylesheet" href="../CSS/notificationStyle.css">
+    <link rel="stylesheet" href="../CSS/style.css">
+</head>
+
+<body>
+
+    <header>
+        <div class="logo" id="logo">
+            <img src="../Asset/Picverse Logo.png" alt="">
+            Picverse
+        </div>
+        <div class="hamburger" id="hamburger">
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+        <nav class="nav-bar" id="nav-menu">
+            <a href="Home.html">Home</a>
+            <a href="Gallery.html">Gallery</a>
+            <a href="Submission.html">Submission</a>
+            <a href="Aboutus.html">About Us</a>
+            <a href="Notification.html" class="selected">Notification</a>
+            <span id="notificationBadge" class="notification-badge">0</span>
+            <a href="Login.html" id="auth-btn">Login</a>
+        </nav>
+    </header>
+
+    <main class="notifications-page">
+
+        <h1>Notifications</h1>
+        <p id="notificationCount"></p>
+
+        <div id="notificationList"></div>
+
+    </main>
+
+    <footer>
+        <div class="footer-logo">Picverse</div>
+
+        <div class="footer-links">
+            <a href="#">About Us</a>
+            <a href="#">Community</a>
+            <a href="#">Privacy Policy</a>
+            <a href="#">Terms</a>
+        </div>
+
+        <div class="copyright">
+            © 2024 Picverse. All rights reserved.
+        </div>
+    </footer>
+
+    <script src="../JavaScript/ScriptNotification.js"></script>
+
+</body>
+
+</html>
