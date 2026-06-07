@@ -164,8 +164,8 @@ export class ArtworkRepository {
   }
 
   async findUserById(userId: number) {
-  return this.prisma.user.findUnique({
-    where: { id: userId },
-  });
-}
+    return this.prisma.user.findUnique({
+      where: { id: userId },
+    });
+  }
 }
