@@ -109,7 +109,7 @@ function renderArtworks(
     artworks
 ) {
     if (!artworks || artworks.length === 0) {
-        container.innerHTML = '<div class="empty-state">Belum ada karya untuk tag ini.</div>';
+        container.innerHTML = '<div class="empty-state">No Artwork For This Tag Yet!</div>';
         return;
     }
 

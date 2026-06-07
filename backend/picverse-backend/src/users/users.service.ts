@@ -1,5 +1,6 @@
 import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
 import { PrismaService } from 'src/common/prisma/prisma.service';
+import { UserRepository } from './users.repository';
 import { UpdateProfileDto } from './dtos/update-profile.dto';
 import * as fs from 'fs';
 import * as path from 'path';
@@ -7,12 +8,10 @@ import { v4 as uuidv4 } from 'uuid';
 
 @Injectable()
 export class UsersService {
-  constructor(private prisma: PrismaService) {}
+  constructor(private prisma: PrismaService, private userRepository: UserRepository) {}
 
   async getProfile(userId: number) {
-    const user = await this.prisma.user.findUnique({
-      where: { id: userId },
-    });
+    const user = await this.userRepository.findById(userId);
 
     if (!user) {
       throw new NotFoundException('User not found');
@@ -27,9 +26,7 @@ export class UsersService {
   }
 
   async updateProfile(userId: number, dto: UpdateProfileDto, file?: any) {
-    const user = await this.prisma.user.findUnique({
-      where: { id: userId },
-    });
+    const user = await this.userRepository.findById(userId);
 
     if (!user) {
       throw new NotFoundException('User not found');
@@ -37,9 +34,7 @@ export class UsersService {
 
     // Email duplication check
     if (dto.email && dto.email !== user.email) {
-      const existingUser = await this.prisma.user.findUnique({
-        where: { email: dto.email },
-      });
+      const existingUser = await this.userRepository.findByEmail(dto.email);
 
       if (existingUser) {
         throw new BadRequestException('Email already in use');
@@ -67,14 +62,14 @@ export class UsersService {
     }
 
     // Update user in database
-    const updatedUser = await this.prisma.user.update({
-      where: { id: userId },
-      data: {
+    const updatedUser = await this.userRepository.update(
+      userId,
+      {
         name: dto.name,
         email: dto.email,
-        profilePicture: profilePictureUrl,
-      },
-    });
+        profilePicture: profilePictureUrl ?? undefined,
+      }
+    );
 
     return {
       id: updatedUser.id,
