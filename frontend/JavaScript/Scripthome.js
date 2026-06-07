@@ -280,9 +280,10 @@ async function loadFeaturedArtworks() {
         if (artworksContainer) {
             artworksContainer.innerHTML = artworks.map(art => {
                 const imageUrl = art.imageUrl.startsWith('http') ? art.imageUrl : `${API_BASE_URL}${art.imageUrl}`;
+                const DEFAULT_AVATAR = 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0iI2NjY2NjYyI+PHBhdGggZD0iTTEyIDEyYzIuMjEgMCA0LTEuNzkgNC00cy0xLjc5LTQtNC00LTQgMS43OS00IDQgMS43OSA0IDQgNHptMCAyYy0yLjY3IDAtOCAxLjM0LTggNHYyaDE2di0yYzAtMi42Ni01LjMzLTQtOC00eiIvPjwvc3ZnPg==';
                 const profileImage = art.user && art.user.profilePicture 
                     ? (art.user.profilePicture.startsWith('http') ? art.user.profilePicture : `${API_BASE_URL}${art.user.profilePicture}`)
-                    : `data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="%23cccccc"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>`;
+                    : DEFAULT_AVATAR;
                 const artistName = art.user ? art.user.name : "Unknown Artist";
                 const tagsStr = art.tags ? art.tags.map(t => t.name).join(",") : "";
                 
@@ -457,4 +458,4 @@ loadTrendingTags();
 loadFeaturedArtworks();
 loadBannerArtworks();
 
-
+
