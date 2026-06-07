@@ -1,8 +1,6 @@
+// ...existing code...
 export interface Notification {
-
-    send(
-        userId: number,
-        message: string
-    ): Promise<void>;
-
+  type: string;
+  buildMessage(payload: any): string;
+  send(payload: any): string; // <- require send so union has it
 }

@@ -402,6 +402,8 @@ function attachLikeEvents() {
                             card.dataset.likes = data.likes;
                             card.dataset.liked = data.liked;
                         }
+
+                        await loadNotificationCount();
                     } catch (error) {
                         console.error("Error liking artwork:", error);
                     }
@@ -477,6 +479,14 @@ modalLikeBtn.addEventListener("click", async () => {
                 }
             }
         }
+
+        if (likeBtn) {
+            if (data.liked) likeBtn.classList.add('liked');
+            else likeBtn.classList.remove('liked');
+        }
+
+        await loadNotificationCount();
+
     } catch (error) {
         console.error("Error liking artwork inside modal:", error);
     }

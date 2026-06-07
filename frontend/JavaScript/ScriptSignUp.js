@@ -88,6 +88,7 @@ form.addEventListener("submit", async (e) => {
     }
 
     try {
+        console.log(API_BASE_URL);
         const response = await fetch(
             `${API_BASE_URL}/auth/register`,
             {
